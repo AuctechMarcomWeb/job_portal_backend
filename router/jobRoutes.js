@@ -26,7 +26,7 @@ router.get("/:id", getJobById);
 router.post(
   "/",
   verifyJWT,
-  //authorizeRoles("RECRUITER"),
+  authorizeRoles("RECRUITER"),
   createJob
 );
 

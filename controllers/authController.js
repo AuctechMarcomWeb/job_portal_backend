@@ -38,7 +38,7 @@ const registerOrLogin = asyncHandler(async (req, res) => {
     user.otpExpiration = otpExpiration;
     await user.save();
 
-    await sendEmailOTP(email, otp);
+   // await sendEmailOTP(email, otp);
 
     return res.status(200).json(
       new apiResponse(
@@ -65,7 +65,7 @@ const registerOrLogin = asyncHandler(async (req, res) => {
     isProfileCompleted: false,
   });
 
-  await sendEmailOTP(email, otp);
+  //await sendEmailOTP(email, otp);
 
   return res.status(201).json(
     new apiResponse(
@@ -160,7 +160,7 @@ const resendOtp = asyncHandler(async (req, res) => {
   user.otpExpiration = otpExpiration;
   await user.save();
 
-  await sendEmailOTP(email, otp);
+  //await sendEmailOTP(email, otp);
 
   return res.status(200).json(
     new apiResponse(

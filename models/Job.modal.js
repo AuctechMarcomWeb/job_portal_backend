@@ -68,7 +68,7 @@ category: {
     payPeriod: {
       type: String,
       enum: ["PER_MONTH", "PER_YEAR", "PER_WEEK", "PER_DAY", "PER_HOUR"],
-      
+      required: true,
     },
 
     currency: {

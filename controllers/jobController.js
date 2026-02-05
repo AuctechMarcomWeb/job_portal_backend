@@ -83,6 +83,7 @@ export const createJob = asyncHandler(async (req, res) => {
     benefits,
     companyName,
     companyLogo,
+    yourRole,
     expiresAt,
   } = req.body;
 
@@ -126,6 +127,7 @@ export const createJob = asyncHandler(async (req, res) => {
     benefits,
     companyName,
     companyLogo,
+    yourRole,
     expiresAt,
     recruiter: req.user._id,
   });
