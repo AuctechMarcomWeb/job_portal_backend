@@ -9,6 +9,7 @@ import {
   deleteUser,
   addUserCV,
   deleteUserCV,
+  switchUserRole,
 } from "../controllers/userController.js";
 
 
@@ -27,5 +28,8 @@ router.delete("/cv/:cvId", verifyJWT, deleteUserCV);
 router.get("/:id", verifyJWT, getUserById);
 router.put("/:id", verifyJWT, updateUser);
 router.delete("/:id", verifyJWT, deleteUser);
+
+// Switch Role
+router.patch("/switch-role", verifyJWT, switchUserRole);
 
 export default router;

@@ -28,6 +28,13 @@ const ApplicationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    position: {
+      type: String,
+    }, 
+
+    experience: {
+      type: String,
+      },
 
     status: {
       type: String,

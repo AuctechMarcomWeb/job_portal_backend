@@ -61,6 +61,22 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
 
+    linkedinUrl: {
+          type: String,
+        }, 
+
+     portfolioUrl: {
+          type: String,
+        }, 
+
+     position: {
+          type: String,
+        }, 
+
+     experience: {
+          type: String,
+          },
+        
     //  Profile Status
     isProfileCompleted: {
       type: Boolean,

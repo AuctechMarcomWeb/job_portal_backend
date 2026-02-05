@@ -1,6 +1,7 @@
 import User from "../models/User.modal.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asynchandler.js";
+import Application from "../models/Application.modal.js";
 
 /**
  * CREATE USER (Admin / Dev Utility)
@@ -36,6 +37,10 @@ export const createUser = asyncHandler(async (req, res) => {
     email,
     gender,
     role,
+    linkedinUrl,
+    portfolioUrl,
+    position,
+    experience,
     isPhoneVerified: true,
     isProfileCompleted: false,
   });
@@ -163,6 +168,10 @@ export const updateUser = asyncHandler(async (req, res) => {
     "name",
     "email",
     "gender",
+    "linkedinUrl",
+    "portfolioUrl",
+    "position",
+    "experience",
     "profilePic",
     "isProfileCompleted",
   ];
@@ -205,5 +214,63 @@ export const deleteUser = asyncHandler(async (req, res) => {
 
   return res.status(200).json(
     new apiResponse(200, null, "User deleted successfully")
+  );
+});
+
+
+
+/**
+ * SWITCH USER ROLE (JOB_SEEKER ↔ RECRUITER)
+ */
+export const switchUserRole = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { role } = req.body;
+
+  if (!["JOB_SEEKER", "RECRUITER"].includes(role)) {
+    return res
+      .status(400)
+      .json(new apiResponse(400, null, "Invalid role"));
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json(new apiResponse(404, null, "User not found"));
+  }
+
+  if (user.role === role) {
+    return res
+      .status(400)
+      .json(new apiResponse(400, null, "User already has this role"));
+  }
+
+  // 🔍 Check if user has applied to any job in past
+  const applicationCount = await Application.countDocuments({
+    applicant: user._id,
+  });
+
+  if (applicationCount > 0) {
+    return res.status(403).json(
+      new apiResponse(
+        403,
+        null,
+        "Role cannot be changed because job applications already exist, Create New Account"
+      )
+    );
+  }
+
+  // ✅ Safe to update role
+  user.role = role;
+  await user.save();
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        role: user.role,
+      },
+      "User role updated successfully"
+    )
   );
 });

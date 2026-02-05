@@ -74,6 +74,7 @@ export const createJob = asyncHandler(async (req, res) => {
     experienceMax,
     salaryMin,
     salaryMax,
+    payPeriod,
     city,
     area,
     pincode,
@@ -98,12 +99,12 @@ export const createJob = asyncHandler(async (req, res) => {
   }
 
   // 🔍 Validate category exists
-  const categoryExists = await Category.findById(category);
-  if (!categoryExists || !categoryExists.isActive) {
-    return res
-      .status(400)
-      .json(new apiResponse(400, null, "Invalid job category"));
-  }
+  // const categoryExists = await Category.findById(category);
+  // if (!categoryExists || !categoryExists.isActive) {
+  //   return res
+  //     .status(400)
+  //     .json(new apiResponse(400, null, "Invalid job category"));
+  // }
 
   const job = await Job.create({
     title,
@@ -116,6 +117,7 @@ export const createJob = asyncHandler(async (req, res) => {
     experienceMax,
     salaryMin,
     salaryMax,
+    payPeriod,
     city,
     area,
     pincode,

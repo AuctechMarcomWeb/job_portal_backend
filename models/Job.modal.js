@@ -65,6 +65,12 @@ category: {
       type: Number,
     },
 
+    payPeriod: {
+      type: String,
+      enum: ["PER_MONTH", "PER_YEAR", "PER_WEEK", "PER_DAY", "PER_HOUR"],
+      
+    },
+
     currency: {
       type: String,
       default: "INR",
