@@ -3,12 +3,15 @@ import {
   saveJob,
   unsaveJob,
   getMySavedJobs,
+  checkSavedJob,
 } from "../controllers/savedJobController.js";
 
 import verifyJWT from "../middlewares/verifyJWT.js";
 import authorizeRoles from "../middlewares/authorizeRoles.js";
 
 const router = Router();
+
+router.get("/check/:jobId", verifyJWT, checkSavedJob);
 
 // Save a job
 router.post(

@@ -88,3 +88,24 @@ export const getMySavedJobs = asyncHandler(async (req, res) => {
     )
   );
 });
+
+/**
+ * CHECK JOB SAVED OR NOT
+ */
+export const checkSavedJob = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { jobId } = req.params;
+
+  const savedJob = await SavedJob.findOne({
+    job: jobId,
+    user: userId,
+  });
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      { isSaved: !!savedJob },
+      "Saved job status fetched"
+    )
+  );
+});

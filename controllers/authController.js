@@ -74,6 +74,7 @@ const registerOrLogin = asyncHandler(async (req, res) => {
       {
         email: newUser.email,
         role: newUser.role,
+        otp: newUser.otp,
         isProfileCompleted: false,
       },
       "User registered, OTP sent successfully"

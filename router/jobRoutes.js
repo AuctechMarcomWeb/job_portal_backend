@@ -33,7 +33,7 @@ router.post(
 // Update job
 router.put(
   "/:id",
-  // authorizeRoles("RECRUITER"),
+   authorizeRoles("RECRUITER"),
   updateJob
 );
 

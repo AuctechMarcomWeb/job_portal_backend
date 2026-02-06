@@ -16,6 +16,7 @@ import applicationRoutes from "./router/applicationRoutes.js";
 import savedJobRoutes from "./router/savedJobRoutes.js";
 import adminJobRoutes from "./router/adminJobRoutes.js";
 import adminApplicationRoutes from "./router/adminApplicationRoutes.js";
+import recruiterDashboardRoutes from "./router/recruiterDashboardRoutes.js";
 
 
 
@@ -55,6 +56,8 @@ app.use("/api/saved-jobs", savedJobRoutes);
 
 app.use("/api/admin/jobs", adminJobRoutes);
 app.use("/api/admin/applications", adminApplicationRoutes);
+app.use("/api/recruiter/dashboard", recruiterDashboardRoutes);
+
 
 
 
