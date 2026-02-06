@@ -141,7 +141,7 @@ category: {
 
     status: {
       type: String,
-      enum: ["ACTIVE","PENDING", "CLOSED"],
+      enum: ["ACTIVE","PENDING", "CLOSED" ,"EXPIRED"],
       default: "ACTIVE",
     },
 

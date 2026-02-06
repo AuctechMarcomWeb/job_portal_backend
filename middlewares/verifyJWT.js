@@ -30,6 +30,12 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
         .status(401)
         .json(new apiResponse(401, null, "User not found"));
     }
+    
+    if (!user.isActive) {
+      return res
+        .status(403)
+        .json(new apiResponse(403, null, "Your account has been blocked by admin"));
+    }
 
     req.user = user; // attach user to request
     next();

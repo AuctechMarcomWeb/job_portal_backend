@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/asynchandler.js";
  * APPLY TO A JOB (Job Seeker)
  */
 export const applyJob = asyncHandler(async (req, res) => {
-  const { jobId, resume, coverLetter } = req.body;
+  const { jobId, resume, coverLetter, linkedinUrl,portfolioUrl } = req.body;
 
   if (!jobId) {
     return res
@@ -49,6 +49,8 @@ export const applyJob = asyncHandler(async (req, res) => {
     recruiter: job.recruiter,
     resume,
     coverLetter,
+    linkedinUrl,
+    portfolioUrl,
   });
 
   // 📊 Update job stats

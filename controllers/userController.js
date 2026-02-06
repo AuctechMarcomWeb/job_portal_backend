@@ -2,6 +2,7 @@ import User from "../models/User.modal.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import Application from "../models/Application.modal.js";
+import Job from "../models/Job.modal.js";
 
 /**
  * CREATE USER (Admin / Dev Utility)
@@ -132,11 +133,75 @@ export const deleteUserCV = asyncHandler(async (req, res) => {
 /**
  * GET ALL USERS (Admin)
  */
-export const getAllUsers = asyncHandler(async (req, res) => {
+export const getAllUsers_old = asyncHandler(async (req, res) => {
   const users = await User.find().sort({ createdAt: -1 });
 
   return res.status(200).json(
     new apiResponse(200, users, "Users fetched successfully")
+  );
+});
+
+/**
+ * GET ALL USERS (Admin with Filters)
+ */
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const {
+    role,
+    name,
+    gender,
+    isProfileCompleted,
+    isEmailVerified,
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  const query = {};
+
+  /* ---------------- FILTERS ---------------- */
+
+  if (role) {
+    query.role = role; // JOB_SEEKER, RECRUITER, ADMIN
+  }
+
+  if (gender) {
+    query.gender = gender; // Male, Female, Other
+  }
+
+  if (name) {
+    query.name = { $regex: name, $options: "i" }; // case-insensitive
+  }
+
+  if (isProfileCompleted !== undefined) {
+    query.isProfileCompleted = isProfileCompleted === "true";
+  }
+
+  if (isEmailVerified !== undefined) {
+    query.isEmailVerified = isEmailVerified === "true";
+  }
+
+  /* ---------------- QUERY ---------------- */
+
+  const skip = (page - 1) * limit;
+
+  const users = await User.find(query)
+    .select("-password -otp -otpExpiration") // 🔐 hide sensitive fields
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
+
+  const total = await User.countDocuments(query);
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        users,
+      },
+      "Users fetched successfully"
+    )
   );
 });
 
@@ -259,6 +324,23 @@ export const switchUserRole = asyncHandler(async (req, res) => {
       )
     );
   }
+
+  // 🔍 Check if recruiter has posted any job
+  const jobCount = await Job.countDocuments({
+    recruiter: user._id, // or recruiterId depending on your schema
+  });
+
+  if (jobCount > 0) {
+    return res.status(403).json(
+      new apiResponse(
+        403,
+        null,
+        "Role cannot be changed because you have posted jobs as a recruiter."
+      )
+    );
+  }
+
+  
 
   // ✅ Safe to update role
   user.role = role;

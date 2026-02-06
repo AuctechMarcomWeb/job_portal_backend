@@ -1,5 +1,6 @@
 import { Router } from "express";
 import verifyJWT from "../middlewares/verifyJWT.js";
+import authorizeRoles from "../middlewares/authorizeRoles.js";
 import {
   createUser,
   getMyProfile,
@@ -13,11 +14,13 @@ import {
 } from "../controllers/userController.js";
 
 
+
 const router = Router();
 
 // Admin / Dev
 router.post("/", createUser);
-router.get("/", verifyJWT, getAllUsers);
+//router.get("/", verifyJWT, getAllUsers);
+router.get("/", verifyJWT, authorizeRoles("ADMIN"), getAllUsers);
 
 // Logged-in User
 router.get("/me", verifyJWT, getMyProfile);

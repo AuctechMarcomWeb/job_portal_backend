@@ -14,6 +14,10 @@ import jobRoutes from "./router/jobRoutes.js";
 import categoryRoutes from "./router/categoryRoutes.js";
 import applicationRoutes from "./router/applicationRoutes.js";
 import savedJobRoutes from "./router/savedJobRoutes.js";
+import adminJobRoutes from "./router/adminJobRoutes.js";
+import adminApplicationRoutes from "./router/adminApplicationRoutes.js";
+
+
 
 
 
@@ -48,6 +52,9 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/saved-jobs", savedJobRoutes);
+
+app.use("/api/admin/jobs", adminJobRoutes);
+app.use("/api/admin/applications", adminApplicationRoutes);
 
 
 

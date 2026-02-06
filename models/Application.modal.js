@@ -36,6 +36,14 @@ const ApplicationSchema = new mongoose.Schema(
       type: String,
       },
 
+      linkedinUrl: {
+          type: String,
+        }, 
+
+     portfolioUrl: {
+          type: String,
+        }, 
+
     status: {
       type: String,
       enum: ["APPLIED", "VIEWED", "SHORTLISTED", "REJECTED", "HIRED","WITHDRAWN"],
