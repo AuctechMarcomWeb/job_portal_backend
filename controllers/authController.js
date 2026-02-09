@@ -167,7 +167,8 @@ const resendOtp = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new apiResponse(
       200,
-      { email },
+      {  email: user.email,
+        otp: user.otp, },
       "OTP resent successfully"
     )
   );
