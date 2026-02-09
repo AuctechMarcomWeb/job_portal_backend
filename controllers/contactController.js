@@ -32,10 +32,16 @@ export const createContact = asyncHandler(async (req, res) => {
 });
 
 /**
- * ADMIN – GET CONTACT LIST WITH FILTERS
+ * ADMIN – GET CONTACT LIST WITH FILTERS + PAGINATION
  */
 export const getContactList = asyncHandler(async (req, res) => {
-  const { search, fromDate, toDate } = req.query;
+  const {
+    search,
+    fromDate,
+    toDate,
+    page = 1,
+    limit = 10,
+  } = req.query;
 
   const filter = {};
 
@@ -47,24 +53,68 @@ export const getContactList = asyncHandler(async (req, res) => {
     ];
   }
 
-  // 📅 Date filter
+  // 📅 Date filter (FULL DAY SAFE)
   if (fromDate || toDate) {
     filter.createdAt = {};
+
     if (fromDate) {
-      filter.createdAt.$gte = new Date(fromDate);
+      filter.createdAt.$gte = new Date(`${fromDate}T00:00:00.000Z`);
     }
+
     if (toDate) {
-      filter.createdAt.$lte = new Date(toDate);
+      filter.createdAt.$lte = new Date(`${toDate}T23:59:59.999Z`);
     }
   }
 
-  const contacts = await ContactUs.find(filter).sort({ createdAt: -1 });
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const [contacts, total] = await Promise.all([
+    ContactUs.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit)),
+
+    ContactUs.countDocuments(filter),
+  ]);
 
   return res.status(200).json(
     new apiResponse(
       200,
-      contacts,
+      {
+        data: contacts,
+        pagination: {
+          totalRecords: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          limit: Number(limit),
+        },
+      },
       "Contact list fetched successfully"
+    )
+  );
+});
+
+/**
+ * ADMIN – DELETE CONTACT
+ */
+export const deleteContact = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const contact = await ContactUs.findById(id);
+
+  if (!contact) {
+    return res
+      .status(404)
+      .json(new apiResponse(404, null, "Contact not found"));
+  }
+
+  await contact.deleteOne();
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      null,
+      "Contact deleted successfully"
     )
   );
 });

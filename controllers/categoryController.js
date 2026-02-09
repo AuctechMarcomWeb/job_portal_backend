@@ -29,11 +29,36 @@ export const createCategory = asyncHandler(async (req, res) => {
 });
 
 export const getCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+  const { page = 1, limit = 10 } = req.query;
 
-  return res
-    .status(200)
-    .json(new apiResponse(200, categories, "Category list fetched"));
+  const filter = { isActive: true };
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const [categories, total] = await Promise.all([
+    Category.find(filter)
+      .sort({ name: 1 })
+      .skip(skip)
+      .limit(Number(limit)),
+
+    Category.countDocuments(filter),
+  ]);
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        data: categories,
+        pagination: {
+          totalRecords: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          limit: Number(limit),
+        },
+      },
+      "Category list fetched"
+    )
+  );
 });
 
 export const updateCategory = asyncHandler(async (req, res) => {
@@ -53,8 +78,34 @@ export const updateCategory = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, category, "Category updated successfully"));
 });
 
+/**
+ * ADMIN – DELETE CONTACT
+ */
+export const deleteCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const category = await Category.findById(id);
+
+  if (!category) {
+    return res
+      .status(404)
+      .json(new apiResponse(404, null, "Category not found"));
+  }
+
+  await category.deleteOne();
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      null,
+      "Category deleted successfully"
+    )
+  );
+});
+
 export default {
   createCategory,
   getCategories,
   updateCategory,
+  deleteCategory,
 };
