@@ -2,6 +2,12 @@ import Application from "../models/Application.modal.js";
 import Job from "../models/Job.modal.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asynchandler.js";
+import { sendEmail } from "../utils/emailService.js";
+import {
+  applicationAppliedTemplate,
+  newApplicationRecruiterTemplate,
+} from "../utils/emailTemplates.js";
+import User from "../models/User.modal.js";
 
 /**
  * APPLY TO A JOB (Job Seeker)
@@ -56,6 +62,32 @@ export const applyJob = asyncHandler(async (req, res) => {
   // 📊 Update job stats
   job.totalApplications += 1;
   await job.save();
+  
+  sendEmail({
+    to: req.user.email,
+    subject: "Application submitted",
+    html: applicationAppliedTemplate({
+      candidateName: req.user.name,
+      jobTitle: job.title,
+      companyName: job.companyName,
+      location: `${job.city}, ${job.state || ""}`,
+    }),
+  });
+
+  // Send Email to Recruiter
+  const recruiter = await User.findById(job.recruiter);
+
+  sendEmail({
+    to: recruiter.email,
+    subject: "New application received",
+    html: newApplicationRecruiterTemplate({
+      recruiterName: recruiter.name,
+      jobTitle: job.title,
+      companyName: job.companyName,
+      applicantName: req.user.name,
+      location: `${job.city}, ${job.state || ""}`,
+    }),
+  });
 
   return res.status(201).json(
     new apiResponse(
@@ -248,6 +280,19 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
 
   application.status = status;
   await application.save();
+
+  // Send Email to Job Seeker on status change
+  const applicant = await User.findById(application.applicant);
+
+  sendEmail({
+    to: applicant.email,
+    subject: "Application Status Updated",
+    html: applicationStatusTemplate({
+      name: applicant.name,
+      jobTitle: application.job.title,
+      status,
+    }),
+  });
 
   return res.status(200).json(
     new apiResponse(
