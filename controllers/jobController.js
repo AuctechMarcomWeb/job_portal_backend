@@ -315,11 +315,11 @@ export const updateJob = asyncHandler(async (req, res) => {
   }
 
   // 🔐 Only owner recruiter can update
-  if (job.recruiter.toString() !== req.user._id.toString()) {
-    return res
-      .status(403)
-      .json(new apiResponse(403, null, "Not authorized to update this job"));
-  }
+  // if (job.recruiter.toString() !== req.user._id.toString()) {
+  //   return res
+  //     .status(403)
+  //     .json(new apiResponse(403, null, "Not authorized to update this job"));
+  // }
 
   Object.assign(job, req.body);
   await job.save();

@@ -13,7 +13,7 @@ export const sendEmail = async ({ to, subject, html }) => {
   try {
 
     const mailOptions = {
-      from: process.env.SMTP_USER,
+      from: `"Wazifaesadat-Job" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,
