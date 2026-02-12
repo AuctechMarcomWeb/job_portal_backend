@@ -284,15 +284,15 @@ export const updateApplicationStatus = asyncHandler(async (req, res) => {
   // Send Email to Job Seeker on status change
   const applicant = await User.findById(application.applicant);
 
-  sendEmail({
-    to: applicant.email,
-    subject: "Application Status Updated",
-    html: applicationStatusTemplate({
-      name: applicant.name,
-      jobTitle: application.job.title,
-      status,
-    }),
-  });
+  // sendEmail({
+  //   to: applicant.email,
+  //   subject: "Application Status Updated",
+  //   html: applicationStatusTemplate({
+  //     name: applicant.name,
+  //     jobTitle: application.job.title,
+  //     status,
+  //   }),
+  // });
 
   return res.status(200).json(
     new apiResponse(
