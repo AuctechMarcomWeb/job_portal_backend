@@ -21,7 +21,7 @@ router.get(
 router.patch(
   "/:id/status",
   verifyJWT,
-  authorizeRoles("ADMIN"),
+ // authorizeRoles("ADMIN"),
   updateJobStatusByAdmin
 );
 
